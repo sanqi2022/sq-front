@@ -1,5 +1,5 @@
 <template>
-  <div class="icon-text">
+  <div class="icon-text-vin">
     <div class="con">
       <slot name="image">
         <!-- <div class="lf">
@@ -36,7 +36,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.icon-text{
+.icon-text-vin{
   width: 100%;height: 100%;
   background-size: 100% 100%;
   position: relative;
@@ -99,14 +99,14 @@ export default {
   }
 }
 @media screen and (min-width: 2560px) {
-  .icon-text{
+  .icon-text-vin{
     .con .mid{font-size: 16px;}
     .con .num{font-size: 30px !important;}
     .con .dw{font-size: 14px !important;}
   }
 }
 @media screen and (min-width: 3840px) {
-  .icon-text{
+  .icon-text-vin{
     .con .mid{font-size: 16px;}
     .con .num{font-size: 30px !important;}
     .con .dw{font-size: 14px !important;}

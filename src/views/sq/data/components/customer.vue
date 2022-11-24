@@ -1,7 +1,7 @@
 <template>
   <sq-card height="20%" :title="'客户管理'">
     <template slot="right">
-      <sq-tab :tabData="tabs"></sq-tab>
+      <sq-tab></sq-tab>
     </template>
     <div class="card-body pabel-container">
       <v-left-right-layout class="h-con">

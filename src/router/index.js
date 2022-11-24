@@ -32,6 +32,7 @@ const routes = [
       title: "登录"
     }
   },
+
 ]
 
 const router = new VueRouter({

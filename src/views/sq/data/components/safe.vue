@@ -1,7 +1,7 @@
 <template>
   <sq-card height="28%" class="sep" :title="'质量及安全'">
     <template slot="right">
-      <sq-tab :tabData="tabs"></sq-tab>
+      <sq-tab></sq-tab>
     </template>
     <div class="card-body pabel-container">
       <div class="m1">

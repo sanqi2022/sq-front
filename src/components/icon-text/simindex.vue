@@ -1,5 +1,5 @@
 <template>
-  <div class="icon-text">
+  <div class="icon-text-sim">
     <div class="t-line"></div>
     <div class="b-line"></div>
     <img src="@/assets/images/public/text/sj.png" class="sj" />
@@ -22,7 +22,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.icon-text{
+.icon-text-sim{
   width: 100%;height: 100%;
   background: url('@/assets/images/public/text/txt_bg.png') center center;
   background-size: 100% 100%;
