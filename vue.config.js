@@ -58,7 +58,11 @@ module.exports = defineConfig({
     resolve: {
       alias: {
         '@': path.resolve('src'),
-        'cesium': path.resolve(__dirname, cesiumSource)
+        'cesium': path.resolve(__dirname, cesiumSource),
+        "http": false,
+        "url": false,
+        "https": false,
+        "zlib": false
       }
     },
     plugins: [
