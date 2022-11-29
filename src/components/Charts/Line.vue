@@ -71,7 +71,6 @@ export default {
           symbol: "none",
           smooth: true,
         };
-        console.log(y);
         if (this.showarea) {
           tmp.areaStyle = { opacity: 0.8, color: colors[inxColor++] };
         }

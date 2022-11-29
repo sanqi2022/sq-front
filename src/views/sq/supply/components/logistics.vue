@@ -25,28 +25,43 @@
 </template>
 <script>
 import SqCard from "@/components/Card/index.vue";
-import SqChooseDate from '@/components/ChooseDate/index.vue'
-import SqIconText from '@/components/icon-text/index.vue'
+import SqChooseDate from "@/components/ChooseDate/index.vue";
+import SqIconText from "@/components/icon-text/index.vue";
+import { GetSupplyChainLogisticsStatics } from "@/api/person";
 export default {
   components: {
     SqCard,
     SqChooseDate,
-    SqIconText
+    SqIconText,
   },
   data() {
     return {
-      cd1: { title: '累计发货量', dw: '万件', val: 103 },
-      cd2: { title: '累计收货量', dw: '万件', val: 60 },
-    }
-  }
-}
+      cd1: { title: "累计发货量", dw: "", val: 0 },
+      cd2: { title: "累计收货量", dw: "", val: 0 },
+    };
+  },
+  mounted() {
+    this.init();
+  },
+  methods: {
+    init() {
+      GetSupplyChainLogisticsStatics({ limit: 100 }).then((res) => {
+        this.cd1.val = res.list[res.list.length - 1].innumber;
+        this.cd2.val = res.list[res.list.length - 1].outnumber;
+
+        this.cd1.dw = res.list[res.list.length - 1].unit;
+        this.cd2.dw = res.list[res.list.length - 1].unit;
+      });
+    },
+  },
+};
 </script>
 <style lang="scss" scoped>
-.list-card{
+.list-card {
   display: flex;
   justify-content: space-between;
   height: 55px;
-  .md{
+  .md {
     width: 48%;
   }
   margin: 0 0 10px 0;

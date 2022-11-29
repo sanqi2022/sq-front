@@ -242,3 +242,175 @@ export function GetCustomerDealStaticsYear(params) {
     params: params
   })
 }
+
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售情况列表
+export function GetMarketSalesList(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售情况列表',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_集团销售情况
+export function GetMarketSalesStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_集团销售情况',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售对比
+export function GetMarketSalesCompareStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售对比',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售趋势
+export function GetMarketSalesTrendStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售趋势',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售额趋势
+export function GetMarketSalesAmountTrendStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售额趋势',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_地区销量
+export function GetMarketSalesAreaRankStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_地区销量',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_产品销量
+export function GetMarketSalesProductRankStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_产品销量',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_地区销售额
+export function GetMarketSalesAmountAreaRankStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_地区销售额',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_产品销售额
+export function GetMarketSalesAmountProductRankStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_产品销售额',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_告警信息
+export function GetSupplyChainAlarmList(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_告警信息',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_库存统计
+export function GetSupplyChainStockStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_库存统计',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_原料库存情况
+export function GetSupplyChainRawStockStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_原料库存情况',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_半成品库存情况
+export function GetSupplyChainSemiStockStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_半成品库存情况',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_成品库存情况
+export function GetSupplyChainFinishedStockStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_成品库存情况',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_各库房使用率
+export function GetSupplyChainStockUseRateStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_各库房使用率',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_原料采购金额
+export function GetSupplyChainRawPurchaseAmountStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_原料采购金额',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_供应商采购金额
+export function GetSupplyChainSupplierPurchaseAmountStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_供应商采购金额',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_原料采购详情
+export function GetSupplyChainRawPurchaseDetailList(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_原料采购详情',
+    method: 'get',
+    params: params
+  })
+}
+
+// /nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_物流信息统计
+export function GetSupplyChainLogisticsStatics(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/供应链管理_物流信息统计',
+    method: 'get',
+    params: params
+  })
+}
