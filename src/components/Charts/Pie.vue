@@ -6,7 +6,12 @@
         <div class="bg-img">
           <div class="txt">
             {{ data[0].name }}<br />
-            <span class="val">{{ data[0].value }}%</span>
+            <span class="val">
+              {{ data[0].value }}
+              <span class="unit">
+                {{ data[0].dw }}
+              </span>
+            </span>
           </div>
         </div>
       </slot>
@@ -164,6 +169,9 @@ export default {
       color: #ffffff;
       font-size: 20px;
       font-family: "Agency FB";
+      .unit {
+        font-size: 14px;
+      }
     }
   }
 }
