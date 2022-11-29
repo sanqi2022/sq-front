@@ -110,7 +110,7 @@ import SqChooseDate from "@/components/ChooseDate/index.vue";
 import SqSubTitle from "@/components/sub-title/index.vue";
 import SqVIconText from "@/components/icon-text/vindex.vue";
 import SqCircleText from "@/components/circle-text/index.vue";
-import SqPie from "@/components/Charts/Pie.vue";
+import SqPie from "@/components/Charts/PieRe.vue";
 import SqBar from "@/components/Charts/Bar.vue";
 import SqMgPie from "@/components/Charts/MgPie.vue";
 import {

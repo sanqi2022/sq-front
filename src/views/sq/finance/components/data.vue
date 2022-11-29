@@ -1,5 +1,5 @@
 <template>
-  <sq-card height="45%" :title="'财务数据'">
+  <sq-card height="60%" :title="'财务数据'">
     <template slot="right">
       <sq-choose-date></sq-choose-date>
     </template>
@@ -114,7 +114,7 @@ import SqTab from "@/components/Tab/index.vue";
 import SqSubTitle from "@/components/sub-title/index.vue";
 import SqIcontextMv from "@/components/icon-text/indexmv.vue";
 import SqVIconText from "@/components/icon-text/vindex.vue";
-import SqPie from "@/components/Charts/Pie.vue";
+import SqPie from "@/components/Charts/PieRe.vue";
 import SqBar from "@/components/Charts/Bar.vue";
 import SqChooseDate from "@/components/ChooseDate/index.vue";
 
