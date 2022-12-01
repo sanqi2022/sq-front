@@ -1,6 +1,6 @@
 <template>
   <div class="map-3d">
-    <iframe id="frame3d" src="http://localhost:9528/3d/#/" width="100%" scrolling="no" height="100%" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+    <iframe id="frame3d" src="/3d/#/" width="100%" scrolling="no" height="100%" marginwidth="0" marginheight="0" frameborder="0"></iframe>
   </div>
 </template>
 <script>
@@ -21,6 +21,12 @@ export default {
     }
   },
   mounted() {
+    window['Loaded'] = () => {
+      let token = getToken()
+      let ifa = document.getElementById('frame3d')
+      ifa.contentWindow.postMessage('@TOKEN@' + token + '#' + this.$store.getters.roles[0], '*')
+      console.log('send token')
+    }
     let ifa = document.getElementById('frame3d')
     setTimeout(() => {
       if (ifa) {
