@@ -52,12 +52,12 @@ router.beforeEach(async (to, from, next) => {
           // get user info
           await store.dispatch('user/getInfo')
           // console.log('roles' + store.getters.roles)
-          if (store.getters.roles == 'admin') {
-            console.log('admin')
-            router.addRoutes(adminRoutes)
+          // if (store.getters.roles == 'admin') {
+          //   console.log('admin')
+          //   router.addRoutes(adminRoutes)
 
-            next({ ...to, replace: true })
-          } else {
+          //   next({ ...to, replace: true })
+          // } else {
             let rses = await getMenus()
             let resRoutes = [
               {
@@ -71,49 +71,67 @@ router.beforeEach(async (to, from, next) => {
                 children: []
               }
             ]
-            
-            let arr = []
-            for (let ro of rses.data[0].children[0].children) {
-              if (maping[ro.path]) {
-                arr.push({
-                  id: maping[ro.path].name,
-                  title: maping[ro.path].meta.title,
-                  path: maping[ro.path].path,
-                })
-                resRoutes[1].children.push(maping[ro.path])
-              }
-              if (ro.path = 'sq-visitor') {
-                resRoutes.push({
-                  path: '/visitor',
-                  name: 'visitor',
-                  component: () => import('@/views/sq/visitor/index.vue'),
-                  meta: {
-                    title: "访客"
+
+            let ztchildres = []
+            for (let r of rses.data) {
+              if (r.meta.title == '三奇数据中台') {
+                for (let ri of r.children) {
+                  if (ri.path == 'sq-front') {
+                    ztchildres = ri.children
                   }
-                })
+                }
               }
             }
-            await store.dispatch('user/setMenus', arr)
             
-            if (resRoutes[1].children.length > 0) {
-              resRoutes[0].redirect = resRoutes[1].children[0].path
+            if (ztchildres.length > 0) {
+              let arr = []
+              for (let ro of ztchildres) {
+                if (maping[ro.path]) {
+                  arr.push({
+                    id: maping[ro.path].name,
+                    title: maping[ro.path].meta.title,
+                    path: maping[ro.path].path,
+                  })
+                  resRoutes[1].children.push(maping[ro.path])
+                }
+                if (ro.path = 'sq-visitor') {
+                  resRoutes.push({
+                    path: '/visitor',
+                    name: 'visitor',
+                    component: () => import('@/views/sq/visitor/index.vue'),
+                    meta: {
+                      title: "访客"
+                    }
+                  })
+                }
+              }
+              await store.dispatch('user/setMenus', arr)
+              
+              if (resRoutes[1].children.length > 0) {
+                resRoutes[0].redirect = resRoutes[1].children[0].path
+              } else {
+                resRoutes[0].redirect = resRoutes[2].path
+              }
+
+              resRoutes[1].children.push({ "path": "/sq/prev", "name": "sq-prev", "meta": { "title": "参观者" }, component: () => import('@/views/sq/preview/index.vue') })
+              resRoutes[1].children.push({
+                path: "*",
+                name: "404",
+                component: () => import('@/views/404.vue')
+              })
+              
+              // console.log('other', to)
+              router.addRoutes(resRoutes)
+
+              next({ ...{ path: resRoutes[0].redirect, fullPath: resRoutes[0].redirect }, replace: true })
             } else {
-              resRoutes[0].redirect = resRoutes[2].path
+              await store.dispatch('user/resetToken')
+              Message.error('没有权限查看，请联系管理员')
+              next(`/login`)
+              NProgress.done()
             }
-            console.log(resRoutes[1].children, resRoutes[0].redirect)
-
-            resRoutes[1].children.push({ "path": "/sq/prev", "name": "sq-prev", "meta": { "title": "参观者" }, component: () => import('@/views/sq/preview/index.vue') })
-            resRoutes[1].children.push({
-              path: "*",
-              name: "404",
-              component: () => import('@/views/404.vue')
-            })
             
-            // console.log('other', to)
-            router.addRoutes(resRoutes)
-
-            next({ ...{ path: resRoutes[0].redirect, fullPath: resRoutes[0].redirect }, replace: true })
-          }
+          // }
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
