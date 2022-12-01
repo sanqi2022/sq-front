@@ -6,8 +6,11 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
+import { getMenus } from '@/api/user'
+
 import adminRoutes from '@/router/modules/admin'
 import visitorRoutes from '@/router/modules/visitor'
+import Container from '@/views/Container/Index.vue'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -34,6 +37,18 @@ router.beforeEach(async (to, from, next) => {
         next()
       } else {
         try {
+          let maping = {
+            "sq-data": { "path": "/sq/data", "name": "sq-data", "meta": { "title": "数据总览" }, component: () => import('@/views/sq/data/index.vue') },
+            "sq-park": { "path": "/sq/park", "name": "sq-park", "meta": { "title": "园区概况" }, component: () => import('@/views/sq/park/index.vue') },
+            "sq-person": { "path": "/sq/person", "name": "sq-person", "meta": { "title": "人员管理" }, component: () => import('@/views/sq/person/index.vue') },
+            "sq-finance": { "path": "/sq/finance", "name": "sq-finance", "meta": { "title": "财务管理" }, component: () => import('@/views/sq/finance/index.vue') },
+            "sq-market": { "path": "/sq/market", "name": "sq-market", "meta": { "title": "市场管理" }, component: () => import('@/views/sq/market/index.vue') }, 
+            "sq-supply": { "path": "/sq/supply", "name": "sq-supply", "meta": { "title": "供应链管理" }, component: () => import('@/views/sq/supply/index.vue') }, 
+            "sq-produce": { "path": "/sq/produce", "name": "sq-produce", "meta": { "title": "生产管理" }, component: () => import('@/views/sq/produce/index.vue') }, 
+            "sq-custom": { "path": "/sq/costom", "name": "sq-custom", "meta": { "title": "客户管理" }, component: () => import('@/views/sq/custom/index.vue') }, 
+            "sq-carbon": { "path": "/sq/carbon", "name": "sq-carbon", "meta": { "title": "碳能管家" }, component: () => import('@/views/sq/carbon/index.vue') }
+          }
+
           // get user info
           await store.dispatch('user/getInfo')
           // console.log('roles' + store.getters.roles)
@@ -43,10 +58,61 @@ router.beforeEach(async (to, from, next) => {
 
             next({ ...to, replace: true })
           } else {
-            // console.log('other', to)
-            router.addRoutes(visitorRoutes)
+            let rses = await getMenus()
+            let resRoutes = [
+              {
+                path: "/",
+                redirect: "/sq/data"
+              },
+              {
+                path: "/sq",
+                name: "sq",
+                component: Container,
+                children: []
+              }
+            ]
+            
+            let arr = []
+            for (let ro of rses.data[0].children[0].children) {
+              if (maping[ro.path]) {
+                arr.push({
+                  id: maping[ro.path].name,
+                  title: maping[ro.path].meta.title,
+                  path: maping[ro.path].path,
+                })
+                resRoutes[1].children.push(maping[ro.path])
+              }
+              if (ro.path = 'sq-visitor') {
+                resRoutes.push({
+                  path: '/visitor',
+                  name: 'visitor',
+                  component: () => import('@/views/sq/visitor/index.vue'),
+                  meta: {
+                    title: "访客"
+                  }
+                })
+              }
+            }
+            await store.dispatch('user/setMenus', arr)
+            
+            if (resRoutes[1].children.length > 0) {
+              resRoutes[0].redirect = resRoutes[1].children[0].path
+            } else {
+              resRoutes[0].redirect = resRoutes[2].path
+            }
+            console.log(resRoutes[1].children, resRoutes[0].redirect)
 
-            next({ ...{ path: '/visitor', fullPath: '/visitor' }, replace: true })
+            resRoutes[1].children.push({ "path": "/sq/prev", "name": "sq-prev", "meta": { "title": "参观者" }, component: () => import('@/views/sq/preview/index.vue') })
+            resRoutes[1].children.push({
+              path: "*",
+              name: "404",
+              component: () => import('@/views/404.vue')
+            })
+            
+            // console.log('other', to)
+            router.addRoutes(resRoutes)
+
+            next({ ...{ path: resRoutes[0].redirect, fullPath: resRoutes[0].redirect }, replace: true })
           }
         } catch (error) {
           // remove token and go to login page to re-login

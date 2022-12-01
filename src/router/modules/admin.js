@@ -103,7 +103,7 @@ const adminRoutes = [
         name: "sq-prev",
         component: () => import('@/views/sq/preview/index.vue'),
         meta: {
-          title: "碳能管家"
+          title: "参观者"
         }
       },
       // 未配置的路由页面

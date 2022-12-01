@@ -7,7 +7,8 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: []
+    roles: [],
+    menus: []
   }
 }
 
@@ -28,7 +29,10 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
-  }
+  },
+  SET_MENUS: (state, menus) => {
+    state.menus = menus
+  },
 }
 
 const actions = {
@@ -88,6 +92,13 @@ const actions = {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
+      resolve()
+    })
+  },
+
+  setMenus({ commit }, menus) {
+    return new Promise(resolve => {
+      commit('SET_MENUS', menus)
       resolve()
     })
   }

@@ -16,14 +16,8 @@ const routes = [
   // },
   // 创建二级路由页面
   
-  {
-    path: '/visitor',
-    name: 'visitor',
-    component: () => import('../views/sq/visitor/index.vue'),
-    meta: {
-      title: "访客"
-    }
-  },
+  
+  
   {
     path: '/login',
     name: 'login',

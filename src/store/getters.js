@@ -7,6 +7,7 @@ const getters = {
   canvas: state => state.canvas,
   event: state => state.event,
   notice: state => state.notice,
-  roles: state => state.user.roles
+  roles: state => state.user.roles,
+  menus: state => state.user.menus
 }
 export default getters

@@ -6,7 +6,7 @@ export default {
   props: {
     data: {
       type: Array,
-      default: () => [{ name: "", data: [] }],
+      default: () => [{ name: "", data: [1,3,5,3,5,6,7,9,10,3,6,8] }],
     },
     xdata: {
       type: Array,

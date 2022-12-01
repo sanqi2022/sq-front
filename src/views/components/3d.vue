@@ -1,6 +1,6 @@
 <template>
   <div class="map-3d">
-    <iframe id="frame3d" src="http://localhost:9529/3d/#/" width="100%" scrolling="no" height="100%" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+    <iframe id="frame3d" src="http://localhost:9528/3d/#/" width="100%" scrolling="no" height="100%" marginwidth="0" marginheight="0" frameborder="0"></iframe>
   </div>
 </template>
 <script>

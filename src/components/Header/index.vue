@@ -1,17 +1,17 @@
 <template>
   <div class="sq-header">
-    <div class="menu" v-if="!isVisitor && showMenu && roles.length > 0 && roles[0] == 'admin'">
+    <div class="menu">
       <div class="nav-button" v-for="item in menusLeft" :key="item.id" :class="{'nav-button-click': curPath == item.path}">
         <router-link :to="item.path">
           <span class="nav-button-text">{{ item.title }}</span>
         </router-link>
       </div>
     </div>
-    <div class="menu" v-else></div>
+    <!-- <div class="menu" v-else></div> -->
     <div class="title">三奇集团普立尔国家级应急产业园
       <!-- <iframe style="padding: 0;" width="500" height="40" src="https://i.tianqi.com/?c=code&amp;a=getcode&amp;id=40&amp;icon=1" frameborder="0"></iframe> -->
     </div>
-    <div class="menu rg" v-if="!isVisitor && showMenu && roles.length > 0 && roles[0] == 'admin'">
+    <div class="menu rg">
       <div class="nav-button" v-for="item in menusRight" :key="item.id" :class="{'nav-button-click': curPath == item.path}">
         <router-link :to="item.path">
           <span class="nav-button-text">{{ item.title }}</span>
@@ -28,7 +28,7 @@
         <i class="el-icon-user-solid" style="cursor:pointer;" @click="handleLogout"></i>
       </div>
     </div>
-    <div class="menu rg" v-else>
+    <!-- <div class="menu rg" v-else>
       <div class="nav-right-icon-time">
         <div class="time-class">
           <div>{{ week }}</div>
@@ -37,7 +37,7 @@
         <div class="nav-right-icon-time-line"></div>
         <i class="el-icon-user-solid" style="cursor:pointer;" @click="handleLogout"></i>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -55,23 +55,23 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'roles'
+      'roles', 'menus'
     ]),
   },
   data() {
     return {
       menusLeft: [
-        { id: 'l1', title: "数据总览", icon: "", path: "/sq/data" },
-        { id: 'l2', title: "园区概况", icon: "", path: "/sq/park" },
-        { id: 'l3', title: "人员管理", icon: "", path: "/sq/person" },
-        { id: 'l4', title: "财务管理", icon: "", path: "/sq/finance" },
-        { id: 'l5', title: "市场管理", icon: "", path: "/sq/market" },
+        // { id: 'l1', title: "数据总览", icon: "", path: "/sq/data" },
+        // { id: 'l2', title: "园区概况", icon: "", path: "/sq/park" },
+        // { id: 'l3', title: "人员管理", icon: "", path: "/sq/person" },
+        // { id: 'l4', title: "财务管理", icon: "", path: "/sq/finance" },
+        // { id: 'l5', title: "市场管理", icon: "", path: "/sq/market" },
       ],
       menusRight: [
-        { id: 'r1', title: "供应链管理", icon: "", path: "/sq/supply" },
-        { id: 'r2', title: "生产管理", icon: "", path: "/sq/produce" },
-        { id: 'r3', title: "客户管理", icon: "", path: "/sq/costom" },
-        { id: 'r4', title: "碳能管家", icon: "", path: "/sq/carbon" },
+        // { id: 'r1', title: "供应链管理", icon: "", path: "/sq/supply" },
+        // { id: 'r2', title: "生产管理", icon: "", path: "/sq/produce" },
+        // { id: 'r3', title: "客户管理", icon: "", path: "/sq/costom" },
+        // { id: 'r4', title: "碳能管家", icon: "", path: "/sq/carbon" },
       ],
       week: "",
       time: "",
@@ -81,13 +81,32 @@ export default {
   watch: {
     '$route'(to, from) {
       this.curPath = to.path
+    },
+    menus(n, o) {
+      this.initMenus()
     }
   },
   mounted() {
     this.getNowTime()
-    console.log('-------------------', this.roles)
+    this.initMenus()
   },
   methods: {
+    initMenus() {
+      let n = this.menus
+      if (n.length <= 5) {
+        for (let ni of n) {
+          this.menusLeft.push(ni)
+        }
+      } else {
+        for (let i=0;i<5;i++) {
+          this.menusLeft.push(n[i])
+        }
+        for (let i=5;i<n.length;i++) {
+          this.menusRight.push(n[i])
+        }
+      }
+      console.log('#########', this.menusLeft)
+    },
     getNowTime() {
       // 获取今天是周几
       let week = new Date().getDay();
@@ -111,7 +130,8 @@ export default {
     },
     async handleLogout() {
       await this.$store.dispatch('user/logout')
-      window.location.href = '/web/#/login'
+      // window.location.href = '/web/#/login'
+      window.location.reload()
     }
   }
 }

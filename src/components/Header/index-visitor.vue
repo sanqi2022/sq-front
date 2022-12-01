@@ -74,7 +74,8 @@ export default {
     },
     async handleLogout() {
       await this.$store.dispatch('user/logout')
-      window.location.href = '/web/#/login'
+      // window.location.href = '/web/#/login'
+      window.location.reload()
     }
   }
 }

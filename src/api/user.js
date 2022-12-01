@@ -14,3 +14,10 @@ export function getInfo() {
     method: 'get'
   })
 }
+
+export function getMenus() {
+  return request({
+    url: '/system/menu/getRouters',
+    method: 'get'
+  })
+}
