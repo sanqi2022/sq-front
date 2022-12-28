@@ -2,8 +2,7 @@
   <div class="com-select-date">
     <el-date-picker
       v-model="dataVal"
-      type="daterange" size="mini"
-      start-placeholder="选择日期"
+      type="year" size="mini"
       end-placeholder="选择日期">
     </el-date-picker>
   </div>
@@ -12,7 +11,7 @@
 export default {
   data() {
     return {
-      dataVal: []
+      dataVal: '2022'
     }
   }
 }
@@ -32,10 +31,11 @@ export default {
       padding: 0;height: 100%;
       width: 60px;
       background: transparent !important;
+      outline: none;border:none !important;
     }
     .el-input__prefix{
       left: auto;
-      right: 0;top: -7px;
+      right: 0;top: -0px;
     }
   }
 }

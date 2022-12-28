@@ -1,5 +1,5 @@
 <template>
-  <div class="map-dt">
+  <div class="map-dt" @click="testS">
     <div id="mapContainer" ref="refChart"></div>
   </div>
 </template>
@@ -7,6 +7,11 @@
 export default {
   mounted() {
     this.initMap();
+  },
+  data() {
+    return {
+      viewer: null,
+    }
   },
   methods: {
     initMap() {
@@ -62,10 +67,15 @@ export default {
           this.addLine(viewer, arr[arr.length - 1], arr[i]);
         }
 
-        viewer.camera.flyTo({
-          destination : this.Cesium.Cartesian3.fromDegrees(113, 40, 20000000.0)
-        })
+        // viewer.camera.flyTo({
+        //   destination : new this.Cesium.Cartesian3(-10293226.037487868, 758956.0335287177, 12756274)//this.Cesium.Cartesian3.fromDegrees(113, 40, 20000000.0)
+        // })
+        viewer.camera.position = new this.Cesium.Cartesian3(9474597.978648543, 143903.94423351693, 12756274)
+        viewer.camera.zoomOut(9000000)
+        // viewer.camera.up = new this.Cesium.Cartesian3(1.2904017555827232e-22, 1, 0)
+        // viewer.camera.right = new this.Cesium.Cartesian3(1, -1.2904017555827232e-22, 0)
       }
+      this.viewer = viewer
 
       ////
       // let url = '/web/test.glb'
@@ -96,6 +106,9 @@ export default {
       // viewer.scene.globe.dynamicAtmosphereLightingFromSun = false
       // viewer.scene.light = customColorLight
       
+    },
+    testS() {
+      console.log(this.viewer.camera)
     },
     addBill(viewer, md, img) {
       return viewer.entities.add({

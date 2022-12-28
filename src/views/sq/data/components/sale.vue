@@ -24,15 +24,15 @@
 
       <div class="chart-con" style="margin-top: 40px;">
         <sq-sub-title :simple="true" class="title" :title="'销量趋势'"></sq-sub-title>
-        <div class="chart">
-          <sq-line :data="cdata1" :showtl="true"></sq-line>
+        <div class="chart" v-if="cdata1.length > 0">
+          <sq-line :data="cdata1" :xdata="xdata1" :showtl="true"></sq-line>
         </div>
       </div>
 
       <div class="chart-con">
         <sq-sub-title :simple="true" class="title" :title="'销售额趋势'"></sq-sub-title>
-        <div class="chart">
-          <sq-line :data="cdata1" :showtl="true"></sq-line>
+        <div class="chart" v-if="cdata2.length > 0">
+          <sq-line :data="cdata2" :xdata="xdata2" :showtl="true"></sq-line>
         </div>
       </div>
 
@@ -76,6 +76,10 @@ import SqGauge from '@/components/Charts/Gauge.vue'
 import SqLine from '@/components/Charts/Line.vue'
 
 import VLeftRightLayout from '@/views/components/left-right-layout.vue'
+import { 
+  GetSaleInfo, GetSaleYear, GetSaleQS, GetSaleEQS
+} from '@/api/person'
+
 export default {
   components: {
     SqCard,
@@ -96,14 +100,70 @@ export default {
         { id: 4, name: '全部产品', type: '4' },
       ],
 
-      cdata1: [
-        { name: '销售额目标', data: [1,3,5,3,5,6,7,9,10,3,6,8] },
-        { name: '实际销售额', data: [1,3,5,3,5,6,7,9,10,3,6,8] },
-        { name: '同期销售额', data: [1,3,5,3,5,6,7,9,10,3,6,8] },
-        { name: '环比销售额', data: [1,3,5,3,5,6,7,9,10,3,6,8] },
-      ],
+      cdata1: [],
+      xdata1: [],
 
-      chdata: [{ name: '去年', namelen: '去年销售额', value: 80, dw: '亿元' }, { name: '今年', namelen: '今年销售额', value: 50, dw: '亿元' }]
+      cdata2: [],
+      xdata2: [],
+
+      chdata: []
+    }
+  },
+  mounted() {
+    this.__init()
+    this.__init2()
+  },
+  methods: {
+    async __init() {
+      let obj = await GetSaleYear()
+      let d = [{ name: '去年', namelen: '去年销售额', value: 0, dw: '亿元' }, { name: '今年', namelen: '今年销售额', value: 0, dw: '亿元' }]
+      d[0].value = obj.list[0].lastYear
+      d[1].value = obj.list[0].thisYear
+      this.chdata = d
+      ///////////////
+
+      let obj2 = await GetSaleQS()
+      let c1 = {}
+      let c1xdata = [], c1data = []
+      for (let di of obj2.list) {
+        if (!c1[di.name]) {
+          c1[di.name] = []
+        }
+        c1[di.name].push(di)
+      }
+      for (let k in c1) {
+        let arr = []
+        c1xdata = []
+        for (let a of c1[k]) {
+          arr.push(Number(a.num))
+          c1xdata.push(a.month + '月')
+        }
+        c1data.push({ name: k, data: arr })
+      }
+      this.cdata1 = c1data
+      this.xdata1 = c1xdata
+    },
+    async __init2() {
+      let obj2 = await GetSaleEQS()
+      let c1 = {}
+      let c1xdata = [], c1data = []
+      for (let di of obj2.list) {
+        if (!c1[di.name]) {
+          c1[di.name] = []
+        }
+        c1[di.name].push(di)
+      }
+      for (let k in c1) {
+        let arr = []
+        c1xdata = []
+        for (let a of c1[k]) {
+          arr.push(Number(a.num))
+          c1xdata.push(a.month + '月')
+        }
+        c1data.push({ name: k, data: arr })
+      }
+      this.cdata2 = c1data
+      this.xdata2 = c1xdata
     }
   }
 }

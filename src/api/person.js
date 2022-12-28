@@ -417,3 +417,35 @@ export function GetSupplyChainLogisticsStatics(params) {
     params: params
   })
 }
+
+export function GetSaleInfo(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售情况',
+    method: 'get',
+    params: params
+  })
+}
+
+export function GetSaleYear(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售额对比',
+    method: 'get',
+    params: params
+  })
+}
+
+export function GetSaleQS(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售趋势',
+    method: 'get',
+    params: {limit: 50}
+  })
+}
+
+export function GetSaleEQS(params) {
+  return request({
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售额趋势',
+    method: 'get',
+    params: {limit: 50}
+  })
+}
