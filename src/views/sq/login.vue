@@ -65,8 +65,8 @@ export default {
       d13: { label: '注册资质', val: '239', unit: '个' },
 
       form: {
-        username: 'sqadmin',
-        password: 'sqadmin'
+        username: '', //sqadmin
+        password: ''
       },
       loading: false
     }
