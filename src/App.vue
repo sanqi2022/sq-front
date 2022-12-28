@@ -8,7 +8,7 @@
 
       <router-view class="router-view-class" />
 
-      <Map3d v-show="curPath != '' && curPath != '/sq/data'" :curPath="curPath"></Map3d>
+      <!-- <Map3d v-show="curPath != '' && curPath != '/sq/data'" :curPath="curPath"></Map3d> -->
       <map-dt v-show="curPath != '' && curPath == '/sq/data'"></map-dt>
     </div>
     <router-view v-else class="router-view-class" />

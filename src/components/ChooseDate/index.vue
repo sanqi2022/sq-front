@@ -1,18 +1,8 @@
 <template>
   <div class="rg-cons" v-if="curtab">
-    <sq-tab
-      :tabData="tabs"
-      v-model="curtab"
-      @eventChange="initTableDate"
-    ></sq-tab>
-    <el-date-picker
-      size="mini"
-      class="date-picker"
-      :clearable="false"
-      v-model="chooseDate"
-      :type="curtab.type"
-      placeholder="请选择"
-    >
+    <sq-tab :tabData="tabs" v-model="curtab" @eventChange="initTableDate"></sq-tab>
+    <el-date-picker size="mini" class="date-picker" :clearable="false" v-model="chooseDate" :type="curtab.type"
+      placeholder="请选择" :format="curtab.format" :value-format="curtab.format">
     </el-date-picker>
   </div>
 </template>
@@ -25,9 +15,9 @@ export default {
   data() {
     return {
       tabs: [
-        { id: 1, name: "日", type: "date" },
-        { id: 2, name: "月", type: "month" },
-        { id: 3, name: "年", type: "year" },
+        // { id: 1, name: "日", type: "date",format:"yyyy-MM-dd"},
+        { id: 2, name: "月", type: "month",format:"yyyy-MM"},
+        { id: 3, name: "年", type: "year",format:"yyyy"},
       ],
       curtab: null,
       datepickerType: "day",
@@ -40,6 +30,12 @@ export default {
   methods: {
     initTableDate() {
       this.$emit("eventChange");
+      this.chooseDate = "";
+    },
+  },
+  watch: {
+    chooseDate() {
+      this.$emit("setDate", this.chooseDate);
     },
   },
 };
@@ -48,11 +44,13 @@ export default {
 .rg-cons {
   display: flex;
   justify-content: space-between;
+
   .date-picker {
     width: 90px;
     margin-left: 5px;
   }
 }
+
 @media screen and (min-width: 2560px) {
   .rg-cons {
     .date-picker {
@@ -61,6 +59,7 @@ export default {
     }
   }
 }
+
 @media screen and (min-width: 3840px) {
   .rg-cons {
     .date-picker {

@@ -1,7 +1,7 @@
 <template>
   <sq-card height="80%" :title="'销售数据'">
     <template slot="right">
-      <sq-choose-date></sq-choose-date>
+      <sq-choose-date @setDate="setDate"></sq-choose-date>
     </template>
     <div class="card-body pabel-container">
       <div class="list-cards">
@@ -66,14 +66,10 @@
       <div class="img-con">
         <div class="lf">
           <sq-sub-title class="title" :title="'销售情况'"></sq-sub-title>
-          <sq-sale-panel></sq-sale-panel>
+          <sq-sale-panel :date="chooseDate"></sq-sale-panel>
         </div>
         <div class="rg">
-          <sq-sub-title
-            :simple="true"
-            class="title"
-            :title="'去年与今年销售额对比'"
-          ></sq-sub-title>
+          <sq-sub-title :simple="true" class="title" :title="'去年与今年销售额对比'"></sq-sub-title>
           <div class="chart">
             <sq-gauge v-if="chdata" :data="chdata"></sq-gauge>
           </div>
@@ -81,34 +77,16 @@
       </div>
 
       <div class="chart-con" style="margin-top: 40px">
-        <sq-sub-title
-          :simple="true"
-          class="title"
-          :title="'销量趋势'"
-        ></sq-sub-title>
+        <sq-sub-title :simple="true" class="title" :title="'销量趋势'"></sq-sub-title>
         <div class="chart">
-          <sq-line
-            v-if="ldata1"
-            :data="ldata1"
-            :xdata="xdata1"
-            :showtl="true"
-          ></sq-line>
+          <sq-line v-if="ldata1" :data="ldata1" :xdata="xdata1" :showtl="true"></sq-line>
         </div>
       </div>
 
       <div class="chart-con">
-        <sq-sub-title
-          :simple="true"
-          class="title"
-          :title="'销售额趋势'"
-        ></sq-sub-title>
+        <sq-sub-title :simple="true" class="title" :title="'销售额趋势'"></sq-sub-title>
         <div class="chart">
-          <sq-line
-            v-if="ldata2"
-            :data="ldata2"
-            :xdata="xdata2"
-            :showtl="true"
-          ></sq-line>
+          <sq-line v-if="ldata2" :data="ldata2" :xdata="xdata2" :showtl="true"></sq-line>
         </div>
       </div>
     </div>
@@ -140,6 +118,7 @@ export default {
   },
   data() {
     return {
+      chooseDate: "",
       cd1: { title: "", dw: "", val: 0 },
       cd2: { title: "", dw: "", val: 0 },
       cd3: { title: "", dw: "", val: 0 },
@@ -216,6 +195,7 @@ export default {
       });
       this.ldata2 = false;
       GetMarketSalesAmountTrendStatics({ limit: 1000 }).then((res) => {
+        console.log(res)
         let xData = [];
         let yData = [
           { name: "销售额目标", data: [] },
@@ -237,18 +217,24 @@ export default {
         this.ldata2 = yData;
       });
     },
+    setDate(date){
+      this.chooseDate = date;
+    }
   },
 };
 </script>
 <style lang="scss" scoped>
 .pabel-container {
   display: block;
+
   .list-cards {
     height: 220px;
+
     .datas {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
+
       .md {
         width: 32%;
         height: 55px;
@@ -256,37 +242,45 @@ export default {
       }
     }
   }
+
   .img-con {
     height: 128px;
     margin: 10px 0 0 0;
     display: flex;
     justify-content: space-between;
+
     .lf {
       width: 60%;
     }
+
     .rg {
       width: 35%;
       height: 100%;
     }
+
     .chart {
       width: 100%;
       height: 100%;
       margin: 10px 0 0 0;
     }
   }
+
   .chart-con {
     height: calc(50% - 200px);
+
     .chart {
       width: 100%;
       height: calc(100% - 40px);
     }
   }
 }
+
 @media screen and (min-width: 2560px) {
   .pabel-container .chart-con {
     height: calc(50% - 210px);
   }
 }
+
 @media screen and (min-width: 3840px) {
   .pabel-container .chart-con {
     height: calc(50% - 220px);

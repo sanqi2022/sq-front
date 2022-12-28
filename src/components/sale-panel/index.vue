@@ -2,11 +2,7 @@
   <div class="sale-panel">
     <div class="lf">
       <div class="pt">
-        <img
-          class="icon"
-          src="@/assets/images/public/salepanel/icon.png"
-          alt=""
-        />
+        <img class="icon" src="@/assets/images/public/salepanel/icon.png" alt="" />
         <span class="txt">集 团</span>
       </div>
       <div class="txt-sum">
@@ -15,7 +11,8 @@
             <span class="tl">累计销售额</span>
             <span class="dw">亿元</span>
           </div>
-          <div class="val">{{ getSum() }}</div>
+          <!-- <div class="val">{{ getSum() }}</div> -->
+          <div class="val">{{ sumNumber }}</div>
         </div>
         <div class="line"></div>
       </div>
@@ -92,6 +89,12 @@
 <script>
 import { GetMarketSalesStatics } from "@/api/person";
 export default {
+  props: {
+    date: {
+      type: String,
+      default: "2022-12",
+    },
+  },
   data() {
     return {
       cd1: {},
@@ -99,6 +102,8 @@ export default {
       cd3: {},
 
       resList: [],
+
+      sumNumber: 0,
     };
   },
   mounted() {
@@ -106,11 +111,61 @@ export default {
   },
   methods: {
     init() {
+      this.cd1 = {};
+      this.cd2 = {};
+      this.cd3 = {};
+      this.sumNumber = 0;
       GetMarketSalesStatics().then((res) => {
-        console.log(res.list);
-        this.cd1 = res.list[0];
-        this.cd2 = res.list[1];
-        this.cd3 = res.list[2];
+        console.log(res.list)
+        let date = this.date;
+        if (date == '') {
+          let time = new Date();
+          date = String(time.getFullYear())
+        }
+        // console.log(res.list, date, "--------------------")
+        let d = 'year'
+        console.log(date)
+        if (date.split('-').length != 1) {
+          d = 'month'
+        }
+        for (let i of res.list) {
+          if (d == 'year') {
+            if (date == i.year) {
+              if (i.name == '电商平台') {
+                this.cd1 = i;
+                this.sumNumber += Number(i.number);
+              }
+              if (i.name == '直售平台') {
+                this.cd2 = i;
+                this.sumNumber += Number(i.number);
+              }
+              if (i.name == '其他渠道') {
+                this.cd3 = i;
+                this.sumNumber += Number(i.number);
+              }
+            }
+          }
+          if (d == 'month') {
+            console.log(date, i.year + '-' + i.month)
+            if (date == i.year + '-' + (i.month < 10 ? '0' + i.month : i.month)) {
+              if (i.name == '电商平台') {
+                this.cd1 = i;
+                this.sumNumber += Number(i.number);
+              }
+              if (i.name == '直售平台') {
+                this.cd2 = i;
+                this.sumNumber += Number(i.number);
+              }
+              if (i.name == '其他渠道') {
+                this.cd3 = i;
+                this.sumNumber += Number(i.number);
+              }
+            }
+          }
+        }
+        // this.cd1 = res.list[0];
+        // this.cd2 = res.list[1];
+        // this.cd3 = res.list[2];
 
         this.resList = res.list;
       });
@@ -131,6 +186,11 @@ export default {
       return sum.toFixed();
     },
   },
+  watch: {
+    date() {
+      this.init();
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -139,10 +199,12 @@ export default {
   align-items: center;
   justify-content: space-between;
   height: 100%;
+
   .lf {
     width: 30%;
     height: 80%;
     position: relative;
+
     .ll {
       position: absolute;
       right: -17px;
@@ -152,9 +214,9 @@ export default {
       height: 2px;
       background: #008cff;
     }
+
     .pt {
-      background: url("@/assets/images/public/salepanel/pt.png") no-repeat
-        center bottom;
+      background: url("@/assets/images/public/salepanel/pt.png") no-repeat center bottom;
       width: 100%;
       height: 50%;
       background-size: contain;
@@ -162,10 +224,12 @@ export default {
       display: flex;
       justify-content: center;
       align-items: flex-end;
+
       .icon {
         position: relative;
         height: 60%;
       }
+
       .txt {
         font-family: "HY";
         font-size: 14px;
@@ -175,40 +239,43 @@ export default {
         top: -6px;
       }
     }
+
     .txt-sum {
-      background: url("@/assets/images/public/text/txt_bg.png") no-repeat center
-        bottom;
+      background: url("@/assets/images/public/text/txt_bg.png") no-repeat center bottom;
       width: 100%;
       height: 50%;
       position: relative;
+
       .line {
         position: absolute;
         left: 0;
         bottom: 1px;
         width: 100%;
         height: 1px;
-        background: linear-gradient(
-          to right,
-          rgba(31, 187, 239, 0),
-          rgba(31, 187, 239, 0.85),
-          rgba(31, 187, 239, 0)
-        );
+        background: linear-gradient(to right,
+            rgba(31, 187, 239, 0),
+            rgba(31, 187, 239, 0.85),
+            rgba(31, 187, 239, 0));
       }
+
       .lbl-val {
         display: flex;
         height: 100%;
         justify-content: space-between;
         align-items: center;
         padding: 0 5px;
+
         .lbl {
           display: flex;
           flex-direction: column;
+
           .tl {
             font-size: 12px;
             color: #bfdfff;
             font-family: "HY";
             white-space: nowrap;
           }
+
           .dw {
             font-size: 12px;
             color: #77c5fe;
@@ -216,6 +283,7 @@ export default {
             margin-top: 4px;
           }
         }
+
         .val {
           color: #00d1ff;
           font-size: 18px;
@@ -225,6 +293,7 @@ export default {
       }
     }
   }
+
   .mid {
     width: 25%;
     height: 100%;
@@ -232,9 +301,9 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     margin-left: 30px;
+
     .pt {
-      background: url("@/assets/images/public/salepanel/pt.png") no-repeat
-        center bottom;
+      background: url("@/assets/images/public/salepanel/pt.png") no-repeat center bottom;
       width: 100%;
       height: 32%;
       background-size: contain;
@@ -243,6 +312,7 @@ export default {
       justify-content: center;
       align-items: flex-end;
       position: relative;
+
       .txt {
         font-family: "HY";
         font-size: 14px;
@@ -251,6 +321,7 @@ export default {
         position: relative;
         top: -6px;
       }
+
       .ll {
         position: absolute;
         left: -14px;
@@ -260,6 +331,7 @@ export default {
         height: 2px;
         background: #008cff;
       }
+
       .llv {
         &.t {
           position: absolute;
@@ -270,6 +342,7 @@ export default {
           height: calc(100% + 18px);
           background: #008cff;
         }
+
         &.b {
           position: absolute;
           left: -14px;
@@ -281,6 +354,7 @@ export default {
       }
     }
   }
+
   .rg {
     flex: 1;
     height: 100%;
@@ -289,35 +363,40 @@ export default {
     align-items: center;
     flex-direction: column;
     padding: 20px 0 0 0;
+
     .md {
       width: 100%;
       height: 25%;
       position: relative;
       display: flex;
       align-items: center;
+
       .jt {
         height: 50%;
         margin: 0 5px 0 0;
       }
     }
+
     .l-txt {
-      background: url("@/assets/images/public/salepanel/txt_bg.png") no-repeat
-        center center;
+      background: url("@/assets/images/public/salepanel/txt_bg.png") no-repeat center center;
       width: 100%;
       height: 100%;
       background-size: 100% 100%;
       position: relative;
+
       .lfk {
         height: 100%;
         position: absolute;
         left: 0;
       }
+
       .rfk {
         height: 100%;
         position: absolute;
         right: 0px;
         transform: rotateY(180deg);
       }
+
       .l-f {
         position: absolute;
         left: -3px;
@@ -326,6 +405,7 @@ export default {
         width: 3px;
         background: #00e4ff;
       }
+
       .r-f {
         position: absolute;
         right: -3px;
@@ -342,16 +422,19 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         .l1 {
           font-size: 12px;
           color: #77c5fe;
           white-space: nowrap;
         }
+
         .v1 {
           font-family: "Agency FB";
           font-size: 16px;
           color: #34e7c1;
         }
+
         .v2 {
           font-family: "Agency FB";
           font-size: 14px;
@@ -361,60 +444,76 @@ export default {
     }
   }
 }
-@media screen and (min-width: 2560px) {
-}
+
+@media screen and (min-width: 2560px) {}
+
 @media screen and (min-width: 3840px) {
   .sale-panel .lf .pt .txt {
     font-size: 20px;
   }
+
   .sale-panel .mid .pt .txt {
     font-size: 16px;
   }
+
   .sale-panel .lf .txt-sum .lbl-val .lbl .tl {
     font-size: 16px;
   }
+
   .sale-panel .lf .txt-sum .lbl-val .lbl .dw {
     font-size: 14px;
   }
+
   .sale-panel .lf .txt-sum .lbl-val .val {
     font-size: 34px;
   }
+
   .sale-panel .rg .l-txt .nums {
     padding: 0 10px;
   }
+
   .sale-panel .rg .l-txt .nums .v1 {
     font-size: 28px;
   }
+
   .sale-panel .rg .l-txt .nums .v2 {
     font-size: 18px;
   }
+
   .sale-panel .rg .l-txt .nums .l1 {
     font-size: 14px;
   }
+
   .sale-panel .rg .md .jt {
     margin: 0 10px;
   }
+
   .sale-panel .lf .ll {
     height: 4px;
     width: 15px;
     right: -30px;
   }
+
   .sale-panel .mid {
     margin: 0 0 0 50px;
   }
+
   .sale-panel .mid .pt .ll {
     height: 4px;
     width: 15px;
     left: -20px;
   }
+
   .sale-panel .mid .pt .llv.b {
     left: -20px;
     width: 4px;
   }
+
   .sale-panel .mid .pt .llv.t {
     left: -20px;
     width: 4px;
   }
+
   .sale-panel .lf .pt .icon {
     height: 90%;
   }

@@ -265,7 +265,8 @@ export function GetMarketSalesStatics(params) {
 // /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售对比
 export function GetMarketSalesCompareStatics(params) {
   return request({
-    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售对比',
+    // url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售对比',
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售额对比',
     method: 'get',
     params: params
   })
@@ -275,6 +276,7 @@ export function GetMarketSalesCompareStatics(params) {
 export function GetMarketSalesTrendStatics(params) {
   return request({
     url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售趋势',
+    // url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销量趋势',
     method: 'get',
     params: params
   })
@@ -283,7 +285,8 @@ export function GetMarketSalesTrendStatics(params) {
 // /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售额趋势
 export function GetMarketSalesAmountTrendStatics(params) {
   return request({
-    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售额趋势',
+    // url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_销售额趋势',
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售额趋势',
     method: 'get',
     params: params
   })
