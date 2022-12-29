@@ -448,3 +448,21 @@ export function GetSaleEQS(str) {
     params: {limit: 50}
   })
 }
+
+// /sanqi/salesNumTrendList post
+export function GetSaleNumTrendList(params) {
+  return request({
+    url: '/sanqi/salesNumTrendList',
+    method: 'post',
+    data: params
+  })
+}
+
+// /sanqi/salesTrendList post
+export function GetSaleTrendList(params) {
+  return request({
+    url: '/sanqi/salesTrendList',
+    method: 'post',
+    data: params
+  })
+}

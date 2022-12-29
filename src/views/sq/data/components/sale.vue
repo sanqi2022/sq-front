@@ -76,9 +76,9 @@ import SqGauge from '@/components/Charts/Gauge.vue'
 import SqLine from '@/components/Charts/Line.vue'
 
 import VLeftRightLayout from '@/views/components/left-right-layout.vue'
-import { 
+import {
   GetSaleInfo, GetSaleYear, GetSaleQS, GetSaleEQS,
-  GetMarketSalesStatics
+  GetMarketSalesStatics, GetSaleNumTrendList, GetSaleTrendList
 } from '@/api/person'
 
 export default {
@@ -140,7 +140,7 @@ export default {
         let where = `?where=(year,eq,${year})`, where2 = `?where=(year,eq,${lastyear})`
         let jnobj = await GetMarketSalesStatics(where)
         let qnobj = await GetMarketSalesStatics(where2)
-        
+
         let s1 = 0, s2 = 0
         for (let l of jnobj.list) {
           if (l.istotal == 1 && l.month == 13) {
@@ -162,48 +162,130 @@ export default {
       }
     },
     async initXLQS(str) {
-      let obj = await GetSaleQS(str)
-      let lens = {}
-      let xz = [], ses = []
-      for (let l of obj.list) {
-        if (!lens[l.name]) {
-          lens[l.name] = []
+      // let obj = await GetSaleQS(str)
+      // let lens = {}
+      // let xz = [], ses = []
+      // for (let l of obj.list) {
+      //   if (!lens[l.name]) {
+      //     lens[l.name] = []
+      //   }
+      //   let num = Number(l.num) / 1000000
+      //   lens[l.name].push({ x: l.month + '月', y: num.toFixed(1) })
+      // }
+      // for (let k in lens) {
+      //   xz = []
+      //   let dat = []
+      //   for (let o of lens[k]) {
+      //     xz.push(o.x)
+      //     dat.push(o.y)
+      //   }
+      //   ses.push({ name: k, data: dat })
+      // }
+      // this.cdata1 = ses
+      // this.xdata1 = xz
+      let ses = [
+        {
+          name: '同期',
+          data: []
+        },
+        {
+          name: '环比',
+          data: []
+        },
+        {
+          name: '当期',
+          data: []
         }
-        let num = Number(l.num) / 1000000
-        lens[l.name].push({ x: l.month + '月', y: num.toFixed(1) })
-      }
-      for (let k in lens) {
-        xz = []
-        let dat = []
-        for (let o of lens[k]) {
-          xz.push(o.x)
-          dat.push(o.y)
+      ], xz = []
+      // nameList = ['同比', '环比', '当期']
+      // console.log(ses, xz, str, dw, indexname, this.chooseDate)
+      let startTime = "", endTime = "", type = ""
+      // let date = new Date()
+
+      startTime = this.saleDate + "-01-01"
+      endTime = this.saleDate + "-12-31"
+      type = "month"
+
+      const obj = await GetSaleNumTrendList({
+        startTime: startTime,
+        endTime: endTime,
+        type: type
+      })
+      for (let i of obj.result) {
+        ses[0].data.push(i.yearBasis)
+        ses[1].data.push(i.relativeRatio)
+        ses[2].data.push(i.thisNumber)
+        if (type == "month") {
+          let time = i.date.split("-")
+          xz.push(time[1] + "月")
         }
-        ses.push({ name: k, data: dat })
+        if (type == "day") {
+          xz.push(i.time)
+        }
       }
       this.cdata1 = ses
       this.xdata1 = xz
     },
 
     async __initXSE(str) {
-      let obj = await GetSaleEQS(str)
-      let lens = {}
-      let xz = [], ses = []
-      for (let l of obj.list) {
-        if (!lens[l.name]) {
-          lens[l.name] = []
+      // let obj = await GetSaleEQS(str)
+      // let lens = {}
+      // let xz = [], ses = []
+      // for (let l of obj.list) {
+      //   if (!lens[l.name]) {
+      //     lens[l.name] = []
+      //   }
+      //   let num = Number(l.num) / 1000000
+      //   lens[l.name].push({ x: l.month + '月', y: num.toFixed(1) })
+      // }
+      // for (let k in lens) {
+      //   xz = []
+      //   let dat = []
+      //   for (let o of lens[k]) {
+      //     xz.push(o.x)
+      //     dat.push(o.y)
+      //   }
+      //   ses.push({ name: k, data: dat })
+      // }
+      let ses = [
+        {
+          name: '同期',
+          data: []
+        },
+        {
+          name: '环比',
+          data: []
+        },
+        {
+          name: '当期',
+          data: []
         }
-        let num = Number(l.num) / 1000000
-        lens[l.name].push({ x: l.month + '月', y: num.toFixed(1) })
-      }
-      for (let k in lens) {
-        xz = []
-        let dat = []
-        for (let o of lens[k]) {
-          xz.push(o.x)
-          dat.push(o.y)
+      ], xz = []
+      // nameList = ['同比', '环比', '当期']
+      // console.log(ses, xz, str, dw, indexname, this.chooseDate)
+      let startTime = "", endTime = "", type = ""
+      // let date = new Date()
+
+      startTime = this.saleDate + "-01-01"
+      endTime = this.saleDate + "-12-31"
+      type = "month"
+
+      const obj = await GetSaleTrendList({
+        startTime: startTime,
+        endTime: endTime,
+        type: type
+      })
+      for (let i of obj.result) {
+        ses[0].data.push(i.yearBasis)
+        ses[1].data.push(i.relativeRatio)
+        ses[2].data.push(i.thisNumber)
+        if (type == "month") {
+          let time = i.date.split("-")
+          xz.push(time[1] + "月")
         }
-        ses.push({ name: k, data: dat })
+        if (type == "day") {
+          xz.push(i.time)
+        }
       }
       this.cdata2 = ses
       this.xdata2 = xz
@@ -212,63 +294,77 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.pabel-container{
+.pabel-container {
   display: block;
-  .h-con{
-    height: 128px;margin: 10px 0 0 0;
-    .chart-con{
+
+  .h-con {
+    height: 128px;
+    margin: 10px 0 0 0;
+
+    .chart-con {
       width: 100%;
       height: 100%;
       display: flex;
       justify-content: space-between;
-      
-      .chart{
-        height: 100%;width: 100%;
-        flex: 1;margin: 10px 0 0 0;
+
+      .chart {
+        height: 100%;
+        width: 100%;
+        flex: 1;
+        margin: 10px 0 0 0;
         position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
-        img{
+
+        img {
           position: absolute;
           width: 40%;
         }
       }
     }
   }
-  .chart-con{
+
+  .chart-con {
     height: calc(50% - 140px);
-    .chart{
+
+    .chart {
       width: 100%;
-      height: calc(100%  - 40px);
+      height: calc(100% - 40px);
     }
   }
 
-  .ls-list{
-    display: flex;margin: 10px 0 0 0;
+  .ls-list {
+    display: flex;
+    margin: 10px 0 0 0;
     justify-content: space-between;
-    .md{height: 100%;
-    }
-  }
-  .ch-con{
 
+    .md {
+      height: 100%;
+    }
   }
+
+  .ch-con {}
 }
+
 @media screen and (min-width: 2560px) {
-  .pabel-container>.chart-con{
+  .pabel-container>.chart-con {
     height: calc(50% - 150px);
-    .chart{
+
+    .chart {
       width: 100%;
-      height: calc(100%  - 40px);
+      height: calc(100% - 40px);
     }
   }
 }
+
 @media screen and (min-width: 3840px) {
-  .pabel-container>.chart-con{
+  .pabel-container>.chart-con {
     height: calc(50% - 166px) !important;
-    .chart{
+
+    .chart {
       width: 100%;
-      height: calc(100%  - 40px);
+      height: calc(100% - 40px);
     }
   }
 }
