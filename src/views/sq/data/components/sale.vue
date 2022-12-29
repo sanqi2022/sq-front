@@ -8,13 +8,13 @@
       <v-left-right-layout :widths="['60%', '38%']" class="h-con">
         <template slot="left">
           <sq-sub-title class="title" :title="'销售情况'"></sq-sub-title>
-          <sq-sale-panel></sq-sale-panel>
+          <sq-sale-panel :date="saleDate" :typedw="dataType"></sq-sale-panel>
         </template>
         <template slot="right">
           <sq-sub-title :simple="true" class="title" :title="'去年与今年销售额对比'"></sq-sub-title>
           <div class="chart-con">
             <div class="chart ch-image">
-              <sq-gauge :data="chdata">
+              <sq-gauge :data="chdata" :typedw="dataType">
               </sq-gauge>
             </div>
           </div>
@@ -77,7 +77,8 @@ import SqLine from '@/components/Charts/Line.vue'
 
 import VLeftRightLayout from '@/views/components/left-right-layout.vue'
 import { 
-  GetSaleInfo, GetSaleYear, GetSaleQS, GetSaleEQS
+  GetSaleInfo, GetSaleYear, GetSaleQS, GetSaleEQS,
+  GetMarketSalesStatics
 } from '@/api/person'
 
 export default {
@@ -99,6 +100,9 @@ export default {
         { id: 3, name: '全球', type: '3' },
         { id: 4, name: '全部产品', type: '4' },
       ],
+      dataType: '百万',
+
+      saleDate: '2022',
 
       cdata1: [],
       xdata1: [],
@@ -111,59 +115,98 @@ export default {
   },
   mounted() {
     this.__init()
-    this.__init2()
   },
   methods: {
-    async __init() {
-      let obj = await GetSaleYear()
-      let d = [{ name: '去年', namelen: '去年销售额', value: 0, dw: '亿元' }, { name: '今年', namelen: '今年销售额', value: 0, dw: '亿元' }]
-      d[0].value = obj.list[0].lastYear
-      d[1].value = obj.list[0].thisYear
-      this.chdata = d
-      ///////////////
+    dy_setDate(date) {
+      this.saleDate = date
 
-      let obj2 = await GetSaleQS()
-      let c1 = {}
-      let c1xdata = [], c1data = []
-      for (let di of obj2.list) {
-        if (!c1[di.name]) {
-          c1[di.name] = []
-        }
-        c1[di.name].push(di)
-      }
-      for (let k in c1) {
-        let arr = []
-        c1xdata = []
-        for (let a of c1[k]) {
-          arr.push(Number(a.num))
-          c1xdata.push(a.month + '月')
-        }
-        c1data.push({ name: k, data: arr })
-      }
-      this.cdata1 = c1data
-      this.xdata1 = c1xdata
+      this.__init()
     },
-    async __init2() {
-      let obj2 = await GetSaleEQS()
-      let c1 = {}
-      let c1xdata = [], c1data = []
-      for (let di of obj2.list) {
-        if (!c1[di.name]) {
-          c1[di.name] = []
+    async __init() {
+      // let obj = await GetSaleYear()
+      let d = [{ name: '去年', namelen: '去年销售额', value: 0, dw: '亿元' }, { name: '今年', namelen: '今年销售额', value: 0, dw: '亿元' }]
+
+      let type = 'year'
+      if (this.saleDate.indexOf('-') >= 0) {
+        type = 'month'
+        let arr = this.saleDate.split('-')
+        let year = arr[0], month = arr[1]
+        let where = `?where=(year,eq,${year})~and(month,eq,${month})`
+        // TODO:
+      } else {
+        type = 'year'
+        let year = this.saleDate
+        let lastyear = Number(year) - 1
+        let where = `?where=(year,eq,${year})`, where2 = `?where=(year,eq,${lastyear})`
+        let jnobj = await GetMarketSalesStatics(where)
+        let qnobj = await GetMarketSalesStatics(where2)
+        
+        let s1 = 0, s2 = 0
+        for (let l of jnobj.list) {
+          if (l.istotal == 1 && l.month == 13) {
+            s1 += Number(l.number / 1000000)
+          }
         }
-        c1[di.name].push(di)
-      }
-      for (let k in c1) {
-        let arr = []
-        c1xdata = []
-        for (let a of c1[k]) {
-          arr.push(Number(a.num))
-          c1xdata.push(a.month + '月')
+        for (let l of qnobj.list) {
+          if (l.istotal == 1 && l.month == 13) {
+            s2 += Number(l.number / 1000000)
+          }
         }
-        c1data.push({ name: k, data: arr })
+        d[0].value = s2.toFixed(1)
+        d[1].value = s1.toFixed(1)
+        this.chdata = d
+        ////////////
+        let k1 = `?where=(year,eq,${year})~not(month,eq,13)~and(istotal,eq,1)`
+        this.initXLQS(k1)
+        this.__initXSE(k1)
       }
-      this.cdata2 = c1data
-      this.xdata2 = c1xdata
+    },
+    async initXLQS(str) {
+      let obj = await GetSaleQS(str)
+      let lens = {}
+      let xz = [], ses = []
+      for (let l of obj.list) {
+        if (!lens[l.name]) {
+          lens[l.name] = []
+        }
+        let num = Number(l.num) / 1000000
+        lens[l.name].push({ x: l.month + '月', y: num.toFixed(1) })
+      }
+      for (let k in lens) {
+        xz = []
+        let dat = []
+        for (let o of lens[k]) {
+          xz.push(o.x)
+          dat.push(o.y)
+        }
+        ses.push({ name: k, data: dat })
+      }
+      this.cdata1 = ses
+      this.xdata1 = xz
+    },
+
+    async __initXSE(str) {
+      let obj = await GetSaleEQS(str)
+      let lens = {}
+      let xz = [], ses = []
+      for (let l of obj.list) {
+        if (!lens[l.name]) {
+          lens[l.name] = []
+        }
+        let num = Number(l.num) / 1000000
+        lens[l.name].push({ x: l.month + '月', y: num.toFixed(1) })
+      }
+      for (let k in lens) {
+        xz = []
+        let dat = []
+        for (let o of lens[k]) {
+          xz.push(o.x)
+          dat.push(o.y)
+        }
+        ses.push({ name: k, data: dat })
+      }
+      this.cdata2 = ses
+      this.xdata2 = xz
     }
   }
 }

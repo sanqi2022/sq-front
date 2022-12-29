@@ -2,13 +2,13 @@
   <div class="app-container">
     <div class="left-container animated" :class="{'fadeOutLeft': !showPanel, 'fadeInLeft': showPanel}">
       <md-finace></md-finace>
-      <md-sale></md-sale>
+      <md-sale ref="refSale"></md-sale>
     </div>
 
     <div class="mid-info-container" :class="{'full': !showPanel}">
       <div class="mid-data">
         <md-com-select></md-com-select>
-        <md-com-date style="margin-left: 15px;"></md-com-date>
+        <md-com-date @eventChangeDate="handleChangeDate" style="margin-left: 15px;"></md-com-date>
       </div>
       <div class="info-panel">
         <div class="top"></div>
@@ -99,6 +99,12 @@ export default {
   data() {
     return {
       showPanel: true
+    }
+  },
+  methods: {
+    handleChangeDate(ev) {
+      console.log(ev)
+      this.$refs.refSale.dy_setDate(ev.val)
     }
   }
 }

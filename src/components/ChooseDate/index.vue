@@ -21,16 +21,22 @@ export default {
       ],
       curtab: null,
       datepickerType: "day",
-      chooseDate: "",
+      chooseDate: "2022",
     };
   },
   mounted() {
-    this.curtab = this.tabs[0];
+    this.curtab = this.tabs[1];
+    this.$emit("setDate", this.chooseDate);
   },
   methods: {
     initTableDate() {
       this.$emit("eventChange");
-      this.chooseDate = "";
+      if (this.curtab.id == 2) {
+        this.chooseDate = "2022-12";
+      } else {
+        this.chooseDate = "2022";
+      }
+      this.$emit("setDate", this.chooseDate);
     },
   },
   watch: {

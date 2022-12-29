@@ -2,8 +2,8 @@
   <div class="com-select-date">
     <el-date-picker
       v-model="dataVal"
-      type="year" size="mini"
-      end-placeholder="选择日期">
+      type="year" size="mini" :value-format="'yyyy'"
+      end-placeholder="选择日期" @change="handleChangeDate">
     </el-date-picker>
   </div>
 </template>
@@ -12,6 +12,11 @@ export default {
   data() {
     return {
       dataVal: '2022'
+    }
+  },
+  methods: {
+    handleChangeDate() {
+      this.$emit('eventChangeDate', { type: 'year', val: this.dataVal })
     }
   }
 }

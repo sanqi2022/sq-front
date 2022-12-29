@@ -9,7 +9,7 @@
         <div class="lbl-val">
           <div class="lbl">
             <span class="tl">累计销售额</span>
-            <span class="dw">亿元</span>
+            <span class="dw">{{ typedw }}</span>
           </div>
           <!-- <div class="val">{{ getSum() }}</div> -->
           <div class="val">{{ sumNumber }}</div>
@@ -45,9 +45,9 @@
 
           <div class="nums">
             <span class="v1">{{ cd1.number }}</span>
-            <span class="l1">亿</span>
+            <span class="l1">{{ typedw }}</span>
             <span class="l1">占比</span>
-            <span class="v2">{{ getNumber(cd1.number) }}</span>
+            <span class="v2">{{ cd1.zb }}</span>
           </div>
         </div>
       </div>
@@ -61,9 +61,9 @@
 
           <div class="nums">
             <span class="v1">{{ cd2.number }}</span>
-            <span class="l1">亿</span>
+            <span class="l1">{{ typedw }}</span>
             <span class="l1">占比</span>
-            <span class="v2">{{ getNumber(cd2.number) }}</span>
+            <span class="v2">{{ cd2.zb }}</span>
           </div>
         </div>
       </div>
@@ -77,9 +77,9 @@
 
           <div class="nums">
             <span class="v1">{{ cd3.number }}</span>
-            <span class="l1">亿</span>
+            <span class="l1">{{ typedw }}</span>
             <span class="l1">占比</span>
-            <span class="v2">{{ getNumber(cd3.number) }}</span>
+            <span class="v2">{{ cd3.zb }}</span>
           </div>
         </div>
       </div>
@@ -94,6 +94,10 @@ export default {
       type: String,
       default: "2022-12",
     },
+    typedw: {
+      type: String,
+      default: 'year'
+    }
   },
   data() {
     return {
@@ -110,65 +114,126 @@ export default {
     this.init();
   },
   methods: {
-    init() {
-      this.cd1 = {};
-      this.cd2 = {};
-      this.cd3 = {};
+    async init() {
+      this.cd1 = {
+        name: '电商平台',
+        number: 0,
+        zb: 0
+      };
+      this.cd2 = {
+        name: '直售平台',
+        number: 0,
+        zb: 0
+      };
+      this.cd3 = {
+        name: '其他渠道',
+        number: 0,
+        zb: 0
+      };
       this.sumNumber = 0;
-      GetMarketSalesStatics().then((res) => {
-        console.log(res.list)
-        let date = this.date;
-        if (date == '') {
-          let time = new Date();
-          date = String(time.getFullYear())
-        }
-        // console.log(res.list, date, "--------------------")
-        let d = 'year'
-        console.log(date)
-        if (date.split('-').length != 1) {
-          d = 'month'
-        }
-        for (let i of res.list) {
-          if (d == 'year') {
-            if (date == i.year) {
-              if (i.name == '电商平台') {
-                this.cd1 = i;
-                this.sumNumber += Number(i.number);
-              }
-              if (i.name == '直售平台') {
-                this.cd2 = i;
-                this.sumNumber += Number(i.number);
-              }
-              if (i.name == '其他渠道') {
-                this.cd3 = i;
-                this.sumNumber += Number(i.number);
-              }
-            }
-          }
-          if (d == 'month') {
-            console.log(date, i.year + '-' + i.month)
-            if (date == i.year + '-' + (i.month < 10 ? '0' + i.month : i.month)) {
-              if (i.name == '电商平台') {
-                this.cd1 = i;
-                this.sumNumber += Number(i.number);
-              }
-              if (i.name == '直售平台') {
-                this.cd2 = i;
-                this.sumNumber += Number(i.number);
-              }
-              if (i.name == '其他渠道') {
-                this.cd3 = i;
-                this.sumNumber += Number(i.number);
-              }
-            }
-          }
-        }
-        // this.cd1 = res.list[0];
-        // this.cd2 = res.list[1];
-        // this.cd3 = res.list[2];
 
-        this.resList = res.list;
-      });
+      let type = 'year'
+      if (this.date.indexOf('-') >= 0) {
+        type = 'month'
+        let arr = this.date.split('-')
+        let year = arr[0], month = parseInt(arr[1])
+        let where = `?where=(year,eq,${year})~and(month,eq,${month})~and(istotal,eq,0)`
+        let jnobj = await GetMarketSalesStatics(where)
+
+        for (let l of jnobj.list) {
+          if (l.name == this.cd1.name) {
+            this.cd1.number = Number(l.number / 10000).toFixed(1)
+          } else if (l.name == this.cd2.name) {
+            this.cd2.number = Number(l.number / 10000).toFixed(1)
+          } else if (l.name == this.cd3.name) {
+            this.cd3.number = Number(l.number / 10000).toFixed(1)
+          }
+        }
+        this.sumNumber = Number(this.cd1.number + this.cd2.number + this.cd3.number).toFixed(1)
+        this.cd1.zb = this.sumNumber == 0 ? '0%' : parseInt(this.cd1.number * 100 / this.sumNumber) + '%'
+        this.cd2.zb = this.sumNumber == 0 ? '0%' : parseInt(this.cd2.number * 100 / this.sumNumber) + '%'
+        this.cd3.zb = this.sumNumber == 0 ? '0%' : parseInt(this.cd3.number * 100 / this.sumNumber) + '%'
+
+      } else {
+        type = 'year'
+        let year = this.date
+        let where = `?where=(year,eq,${year})`
+        let jnobj = await GetMarketSalesStatics(where)
+        
+        for (let l of jnobj.list) {
+          if (l.istotal == 1 && l.month == 13) {
+            if (l.name == this.cd1.name) {
+              this.cd1.number = Number(l.number / 1000000).toFixed(1)
+            } else if (l.name == this.cd2.name) {
+              this.cd2.number = Number(l.number / 1000000).toFixed(1)
+            } else if (l.name == this.cd3.name) {
+              this.cd3.number = Number(l.number / 1000000).toFixed(1)
+            }
+          }
+        }
+        this.sumNumber = Number(this.cd1.number + this.cd2.number + this.cd3.number).toFixed(1)
+        this.cd1.zb = this.sumNumber == 0 ? '0%' : parseInt(this.cd1.number * 100 / this.sumNumber) + '%'
+        this.cd2.zb = this.sumNumber == 0 ? '0%' : parseInt(this.cd2.number * 100 / this.sumNumber) + '%'
+        this.cd3.zb = this.sumNumber == 0 ? '0%' : parseInt(this.cd3.number * 100 / this.sumNumber) + '%'
+      }
+
+      
+      
+      
+      // GetMarketSalesStatics().then((res) => {
+      //   console.log(res.list)
+      //   let date = this.date;
+      //   if (date == '') {
+      //     let time = new Date();
+      //     date = String(time.getFullYear())
+      //   }
+      //   // console.log(res.list, date, "--------------------")
+      //   let d = 'year'
+      //   console.log(date)
+      //   if (date.split('-').length != 1) {
+      //     d = 'month'
+      //   }
+      //   for (let i of res.list) {
+      //     if (d == 'year') {
+      //       if (date == i.year) {
+      //         if (i.name == '电商平台') {
+      //           this.cd1 = i;
+      //           this.sumNumber += Number(i.number);
+      //         }
+      //         if (i.name == '直售平台') {
+      //           this.cd2 = i;
+      //           this.sumNumber += Number(i.number);
+      //         }
+      //         if (i.name == '其他渠道') {
+      //           this.cd3 = i;
+      //           this.sumNumber += Number(i.number);
+      //         }
+      //       }
+      //     }
+      //     if (d == 'month') {
+      //       console.log(date, i.year + '-' + i.month)
+      //       if (date == i.year + '-' + (i.month < 10 ? '0' + i.month : i.month)) {
+      //         if (i.name == '电商平台') {
+      //           this.cd1 = i;
+      //           this.sumNumber += Number(i.number);
+      //         }
+      //         if (i.name == '直售平台') {
+      //           this.cd2 = i;
+      //           this.sumNumber += Number(i.number);
+      //         }
+      //         if (i.name == '其他渠道') {
+      //           this.cd3 = i;
+      //           this.sumNumber += Number(i.number);
+      //         }
+      //       }
+      //     }
+      //   }
+      //   // this.cd1 = res.list[0];
+      //   // this.cd2 = res.list[1];
+      //   // this.cd3 = res.list[2];
+
+      //   this.resList = res.list;
+      // });
     },
     getNumber(number) {
       let sum = 0;

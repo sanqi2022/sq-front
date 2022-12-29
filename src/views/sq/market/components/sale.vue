@@ -66,12 +66,12 @@
       <div class="img-con">
         <div class="lf">
           <sq-sub-title class="title" :title="'销售情况'"></sq-sub-title>
-          <sq-sale-panel :date="chooseDate"></sq-sale-panel>
+          <sq-sale-panel :date="chooseDate" :typedw="dataType"></sq-sale-panel>
         </div>
         <div class="rg">
           <sq-sub-title :simple="true" class="title" :title="'去年与今年销售额对比'"></sq-sub-title>
           <div class="chart">
-            <sq-gauge v-if="chdata" :data="chdata"></sq-gauge>
+            <sq-gauge v-if="chdata" :data="chdata" :typedw="dataType"></sq-gauge>
           </div>
         </div>
       </div>
@@ -105,6 +105,8 @@ import {
   GetMarketSalesCompareStatics,
   GetMarketSalesTrendStatics,
   GetMarketSalesAmountTrendStatics,
+  GetMarketSalesStatics,
+  GetSaleQS, GetSaleEQS,
 } from "@/api/person";
 export default {
   components: {
@@ -129,6 +131,8 @@ export default {
       cd8: { title: "", dw: "", val: 0 },
       cd9: { title: "", dw: "", val: 0 },
 
+      dataType: '',
+
       chdata: [
         { name: "去年", namelen: "去年销售额", value: 80, dw: "亿元" },
         { name: "今年", namelen: "今年销售额", value: 50, dw: "亿元" },
@@ -149,7 +153,76 @@ export default {
     this.init();
   },
   methods: {
-    init() {
+    async init() {
+      let d = [{ name: '去年', namelen: '去年销售额', value: 0, dw: '亿元' }, { name: '今年', namelen: '今年销售额', value: 0, dw: '亿元' }]
+
+      let type = 'year'
+      if (this.chooseDate.indexOf('-') >= 0) {
+        type = 'month'
+        let arr = this.chooseDate.split('-')
+        let year = parseInt(arr[0]), month = parseInt(arr[1])
+        let lastmonth = month - 1
+        let lastyear = year
+        if (lastmonth <= 0) {
+          lastmonth = 12
+          lastyear = lastyear - 1
+        }
+        let where = `?where=(year,eq,${year})~and(month,eq,${month})~and(istotal,eq,0)`
+        let where2 = `?where=(year,eq,${lastyear})~and(month,eq,${lastmonth})~and(istotal,eq,0)`
+        let jnobj = await GetMarketSalesStatics(where)
+        let qnobj = await GetMarketSalesStatics(where2)
+
+        let s1 = 0, s2 = 0
+        for (let l of jnobj.list) {
+          s1 += Number(l.number / 10000)
+        }
+        for (let l of qnobj.list) {
+          s2 += Number(l.number / 10000)
+        }
+
+        d[0].name = '上月'
+        d[0].namelen = '上月销售额'
+        d[0].value = s2.toFixed(1)
+        d[1].name = '本月'
+        d[1].namelen = '本月销售额'
+        d[1].value = s1.toFixed(1)
+        this.chdata = d
+        ///////////////
+        let k1 = `?where=(year,eq,${year})~and(month,eq,${month})~and(istotal,eq,0)&sort=Id`
+        this.initXLQS(k1, '日', 'day')
+        this.__initXSE(k1, '日', 'day')
+        this.dataType = '万'
+
+      } else {
+        type = 'year'
+        let year = this.chooseDate
+        let lastyear = Number(year) - 1
+        let where = `?where=(year,eq,${year})`, where2 = `?where=(year,eq,${lastyear})`
+        let jnobj = await GetMarketSalesStatics(where)
+        let qnobj = await GetMarketSalesStatics(where2)
+        
+        let s1 = 0, s2 = 0
+        for (let l of jnobj.list) {
+          if (l.istotal == 1 && l.month == 13) {
+            s1 += Number(l.number / 1000000)
+          }
+        }
+        for (let l of qnobj.list) {
+          if (l.istotal == 1 && l.month == 13) {
+            s2 += Number(l.number / 1000000)
+          }
+        }
+        d[0].value = s2.toFixed(1)
+        d[1].value = s1.toFixed(1)
+        this.chdata = d
+
+        let k1 = `?where=(year,eq,${year})~not(month,eq,13)~and(istotal,eq,1)`
+        this.initXLQS(k1, '月', 'month')
+        this.__initXSE(k1, '月', 'month')
+
+        this.dataType = '百万'
+      }
+
       GetMarketSalesList().then((res) => {
         for (let i in res.list) {
           this["cd" + (Number(i) + 1)]["title"] = res.list[i].name;
@@ -157,68 +230,123 @@ export default {
           this["cd" + (Number(i) + 1)]["dw"] = "单位：" + res.list[i].unit;
         }
       });
-      this.chdata = false;
-      GetMarketSalesCompareStatics().then((res) => {
-        console.log(res.list);
-        let data = [];
-        res.list.forEach((item) => {
-          data.push({
-            name: item.name,
-            namelen: item.name + "销售额",
-            value: item.number,
-            dw: item.unit,
-          });
-        });
-        this.chdata = data;
-      });
-      this.ldata1 = false;
-      GetMarketSalesTrendStatics({ limit: 1000 }).then((res) => {
-        let xData = [];
-        let yData = [
-          { name: "销售额目标", data: [] },
-          { name: "实际销售额", data: [] },
-          { name: "同期销售额", data: [] },
-          { name: "环比销售额", data: [] },
-        ];
-        res.list.forEach((item) => {
-          if (xData.indexOf(item.time) == -1) {
-            xData.push(item.time);
-          }
-          yData.forEach((item1) => {
-            if (item1.name == item.name) {
-              item1.data.push(item.number);
-            }
-          });
-        });
-        this.xdata1 = xData;
-        this.ldata1 = yData;
-      });
-      this.ldata2 = false;
-      GetMarketSalesAmountTrendStatics({ limit: 1000 }).then((res) => {
-        console.log(res)
-        let xData = [];
-        let yData = [
-          { name: "销售额目标", data: [] },
-          { name: "实际销售额", data: [] },
-          { name: "同期销售额", data: [] },
-          { name: "环比销售额", data: [] },
-        ];
-        res.list.forEach((item) => {
-          if (xData.indexOf(item.time) == -1) {
-            xData.push(item.time);
-          }
-          yData.forEach((item1) => {
-            if (item1.name == item.name) {
-              item1.data.push(item.number);
-            }
-          });
-        });
-        this.xdata2 = xData;
-        this.ldata2 = yData;
-      });
+
+      // this.chdata = false;
+      // GetMarketSalesCompareStatics().then((res) => {
+      //   console.log(res.list);
+      //   let data = [];
+      //   res.list.forEach((item) => {
+      //     data.push({
+      //       name: item.name,
+      //       namelen: item.name + "销售额",
+      //       value: item.number,
+      //       dw: item.unit,
+      //     });
+      //   });
+      //   this.chdata = data;
+      // });
+
+
+      // this.ldata1 = false;
+      // GetMarketSalesTrendStatics({ limit: 1000 }).then((res) => {
+      //   let xData = [];
+      //   let yData = [
+      //     { name: "销售额目标", data: [] },
+      //     { name: "实际销售额", data: [] },
+      //     { name: "同期销售额", data: [] },
+      //     { name: "环比销售额", data: [] },
+      //   ];
+      //   res.list.forEach((item) => {
+      //     if (xData.indexOf(item.time) == -1) {
+      //       xData.push(item.time);
+      //     }
+      //     yData.forEach((item1) => {
+      //       if (item1.name == item.name) {
+      //         item1.data.push(item.number);
+      //       }
+      //     });
+      //   });
+      //   this.xdata1 = xData;
+      //   this.ldata1 = yData;
+      // });
+      // this.ldata2 = false;
+      // GetMarketSalesAmountTrendStatics({ limit: 1000 }).then((res) => {
+      //   console.log(res)
+      //   let xData = [];
+      //   let yData = [
+      //     { name: "销售额目标", data: [] },
+      //     { name: "实际销售额", data: [] },
+      //     { name: "同期销售额", data: [] },
+      //     { name: "环比销售额", data: [] },
+      //   ];
+      //   res.list.forEach((item) => {
+      //     if (xData.indexOf(item.time) == -1) {
+      //       xData.push(item.time);
+      //     }
+      //     yData.forEach((item1) => {
+      //       if (item1.name == item.name) {
+      //         item1.data.push(item.number);
+      //       }
+      //     });
+      //   });
+      //   this.xdata2 = xData;
+      //   this.ldata2 = yData;
+      // });
+    },
+    async initXLQS(str, dw, indexname) {
+      let obj = await GetSaleQS(str)
+      let lens = {}
+      let xz = [], ses = []
+      console.log(xz, obj, str)
+      for (let l of obj.list) {
+        if (!lens[l.name]) {
+          lens[l.name] = []
+        }
+        let bl = indexname == 'month' ? 1000000 : 10000
+        let num = Number(l.num) / bl
+        lens[l.name].push({ x: l[indexname] + dw, y: num.toFixed(1) })
+      }
+      for (let k in lens) {
+        xz = []
+        let dat = []
+        for (let o of lens[k]) {
+          xz.push(o.x)
+          dat.push(o.y)
+        }
+        ses.push({ name: k, data: dat })
+      }
+      this.ldata1 = ses
+      this.xdata1 = xz
+    },
+
+    async __initXSE(str, dw, indexname) {
+      let obj = await GetSaleEQS(str)
+      let lens = {}
+      let xz = [], ses = []
+      for (let l of obj.list) {
+        if (!lens[l.name]) {
+          lens[l.name] = []
+        }
+        let bl = indexname == 'month' ? 1000000 : 10000
+        let num = Number(l.num) / bl
+        lens[l.name].push({ x: l[indexname] + dw, y: num })
+      }
+      for (let k in lens) {
+        xz = []
+        let dat = []
+        for (let o of lens[k]) {
+          xz.push(o.x)
+          dat.push(o.y)
+        }
+        ses.push({ name: k, data: dat })
+      }
+      this.ldata2 = ses
+      this.xdata2 = xz
     },
     setDate(date){
       this.chooseDate = date;
+      console.log(date)
+      this.init();
     }
   },
 };

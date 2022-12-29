@@ -34,6 +34,13 @@ export default {
       default: true,
     },
   },
+  watch: {
+    data(n,o) {
+      let xdata = this.xdata;
+      let ses = this.data;
+      this.__init(xdata, ses);
+    }
+  },
   mounted() {
     let xdata = this.xdata;
     let ses = this.data;

@@ -256,9 +256,8 @@ export function GetMarketSalesList(params) {
 // /nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_集团销售情况
 export function GetMarketSalesStatics(params) {
   return request({
-    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_集团销售情况',
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/市场管理_集团销售情况' + params,
     method: 'get',
-    params: params
   })
 }
 
@@ -434,17 +433,17 @@ export function GetSaleYear(params) {
   })
 }
 
-export function GetSaleQS(params) {
+export function GetSaleQS(str) {
   return request({
-    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售趋势',
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售趋势' + str,
     method: 'get',
     params: {limit: 50}
   })
 }
 
-export function GetSaleEQS(params) {
+export function GetSaleEQS(str) {
   return request({
-    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售额趋势',
+    url: '/nocodbv2/api/v1/db/data/noco/三奇数字孪生/数据总览_销售额趋势' + str,
     method: 'get',
     params: {limit: 50}
   })

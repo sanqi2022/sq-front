@@ -14,7 +14,7 @@
             {{ item.namelen }}
             <div class="vals">
               <span class="v">{{ item.value }}</span>
-              <span class="dw">{{ item.dw }}</span>
+              <span class="dw">{{ typedw }}</span>
             </div>
           </div>
         </div>
@@ -43,6 +43,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    typedw: {
+      type: String,
+      default: 'year'
+    }
   },
   watch: {
     data: {
@@ -138,8 +142,12 @@ export default {
       let tb = 0;
       if (ses.length > 1) {
         tb = ses[1].value - ses[0].value;
-        tb = (tb / ses[0].value) * 100;
-        tb = tb.toFixed(1);
+        if (ses[0].value == 0) {
+          tb = 100
+        } else {
+          tb = (tb / ses[0].value) * 100;
+          tb = tb.toFixed(1);
+        }
         tb = tb + "%";
         if (ses[1].value > ses[0].value) {
           tb = "+" + tb;
