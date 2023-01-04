@@ -357,7 +357,7 @@ export default {
           xz.push(time[1] + "月")
         }
         if (type == "day") {
-          xz.push(i.time)
+          xz.push(i.date)
         }
       }
       this.ldata1 = ses
@@ -426,7 +426,7 @@ export default {
           xz.push(time[1] + "月")
         }
         if (type == "day") {
-          xz.push(i.time)
+          xz.push(i.date)
         }
       }
       this.ldata2 = ses
