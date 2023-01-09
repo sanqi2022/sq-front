@@ -77,14 +77,14 @@
       </div>
 
       <div class="chart-con" style="margin-top: 40px">
-        <sq-sub-title :simple="true" class="title" :title="'销量趋势'"></sq-sub-title>
+        <sq-sub-title :simple="true" class="title" :title="'销量趋势（件）'"></sq-sub-title>
         <div class="chart">
           <sq-line v-if="ldata1" :data="ldata1" :xdata="xdata1" :showtl="true"></sq-line>
         </div>
       </div>
 
       <div class="chart-con">
-        <sq-sub-title :simple="true" class="title" :title="'销售额趋势'"></sq-sub-title>
+        <sq-sub-title :simple="true" class="title" :title="'销售额趋势（元）'"></sq-sub-title>
         <div class="chart">
           <sq-line v-if="ldata2" :data="ldata2" :xdata="xdata2" :showtl="true"></sq-line>
         </div>
